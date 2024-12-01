@@ -14,3 +14,5 @@ paper/*
 *.~undo-tree~
 
 docs/build
+
+.venv/
