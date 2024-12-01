@@ -25,3 +25,6 @@ def main():
 
     out = phonemize(args.input.splitlines())
     print(out)
+
+if __name__ == '__main__':
+    main()
