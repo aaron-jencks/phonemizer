@@ -34,11 +34,11 @@ class CustomEspeakBackend(EspeakBackend):
 
     def phonemize(self, text: List[str]) -> List[str]:
         if not self.regex:
-            return super().phonemize(text)
+            return super(CustomEspeakBackend, self).phonemize(text)
 
         pre_process = [self.pre_process(
-            txt, super().phonemize) for txt in text]
-        phonemized = super().phonemize([txt for txt, _ in pre_process])
+            txt, super(CustomEspeakBackend, self).phonemize) for txt in text]
+        phonemized = super(CustomEspeakBackend, self).phonemize([txt for txt, _ in pre_process])
         post_txt = [self.post_process(phoneme, process[1])
                     for process, phoneme in zip(pre_process, phonemized)]
 
