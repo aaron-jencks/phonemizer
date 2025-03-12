@@ -18,8 +18,9 @@ class CustomEspeakBackend(EspeakBackend):
                  language_switch: LanguageSwitch = 'keep-flags',
                  words_mismatch: WordMismatch = 'ignore',
                  logger: Optional[Logger] = None):
-        self.token = "<|begin_real_number_{index}|> {content}"
-        self.regex = '|'.join([f'({pattern})' for pattern in preserve_regex])
+        self.token = "<|begin_custom_regex_preservation|> {content}"
+        self.regex = re.compile('|'.join([f'({pattern})' for pattern in preserve_regex]))
+        self.mappings = {}
 
         super().__init__(
             language,
@@ -36,6 +37,8 @@ class CustomEspeakBackend(EspeakBackend):
         if not self.regex:
             return super(CustomEspeakBackend, self).phonemize(text)
 
+        self.mappings = {}
+
         pre_process = [self.pre_process(
             txt, super(CustomEspeakBackend, self).phonemize) for txt in text]
         phonemized = super(CustomEspeakBackend, self).phonemize([txt for txt, _ in pre_process])
@@ -45,33 +48,30 @@ class CustomEspeakBackend(EspeakBackend):
         return post_txt
 
     def pre_process(self, txt: str, phonemize):
-        counter = [0]
-        replacements = []
-
         def replace_match(match):
             txt = match.group(0)
             token = self.token.format(
-                index=counter[0],
                 content=txt
             )
-            counter[0] += 1
-            content = f"{token} {txt}"
-            phoneme = phonemize([content])[0]
-            replacements.append((phoneme.strip(), txt))
+            
+            if txt in self.mappings:
+                return token
+                
+            phoneme = phonemize([token])[0]
+            self.mappings[txt] = phoneme.strip()
 
-            return content
+            return token
 
-        processed_text = re.sub(self.regex, replace_match, txt)
+        processed_text = self.regex.sub(replace_match, txt)
 
         return processed_text, replacements
 
     def post_process(self, phoneme: str, replacements: List[Tuple[str, str]]):
-        for replacement in replacements:
-            if replacement[0] in phoneme:
-                phoneme = phoneme.replace(
-                    replacement[0], replacement[1], 1)
-            else:
-                print(
-                    f"Replacement '{replacement[0]}' not found in '{phoneme}'")
+        for token in self.mappings:
+            tphoneme = self.mappings[token]
+            if tphoneme not in phoneme:
+                raise Exception(f"Replacement '{replacement[0]}' not found in '{phoneme}'")
+            phoneme = phoneme.replace(
+                tphoneme, token)
 
         return phoneme
