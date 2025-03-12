@@ -41,9 +41,8 @@ class CustomEspeakBackend(EspeakBackend):
 
         pre_process = [self.pre_process(
             txt, super(CustomEspeakBackend, self).phonemize) for txt in text]
-        phonemized = super(CustomEspeakBackend, self).phonemize([txt for txt, _ in pre_process])
-        post_txt = [self.post_process(phoneme, process[1])
-                    for process, phoneme in zip(pre_process, phonemized)]
+        phonemized = super(CustomEspeakBackend, self).phonemize(pre_process)
+        post_txt = [self.post_process(phoneme) for phoneme in phonemized]
 
         return post_txt
 
@@ -64,9 +63,9 @@ class CustomEspeakBackend(EspeakBackend):
 
         processed_text = self.regex.sub(replace_match, txt)
 
-        return processed_text, replacements
+        return processed_text
 
-    def post_process(self, phoneme: str, replacements: List[Tuple[str, str]]):
+    def post_process(self, phoneme: str):
         for token in self.mappings:
             tphoneme = self.mappings[token]
             if tphoneme not in phoneme:
