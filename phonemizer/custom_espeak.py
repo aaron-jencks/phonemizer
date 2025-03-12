@@ -37,14 +37,15 @@ class CustomEspeakBackend(EspeakBackend):
         if not self.regex:
             return super(CustomEspeakBackend, self).phonemize(text)
 
-        self.mappings = {}
-
-        pre_process = [self.pre_process(
-            txt, super(CustomEspeakBackend, self).phonemize) for txt in text]
-        phonemized = super(CustomEspeakBackend, self).phonemize(pre_process)
-        post_txt = [self.post_process(phoneme) for phoneme in phonemized]
-
-        return post_txt
+        result = []
+        for txt in text:
+            self.mappings = {}
+            pre_process = self.pre_process(txt, super(CustomEspeakBackend, self).phonemize)
+            phonemized = super(CustomEspeakBAckend, self).phonemize([pre_process])[0]
+            post_txt = self.post_process(phonemized)
+            result.append(post_txt)
+            
+        return result
 
     def pre_process(self, txt: str, phonemize):
         def replace_match(match):
