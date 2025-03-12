@@ -41,7 +41,7 @@ class CustomEspeakBackend(EspeakBackend):
         for txt in text:
             self.mappings = {}
             pre_process = self.pre_process(txt, super(CustomEspeakBackend, self).phonemize)
-            phonemized = super(CustomEspeakBAckend, self).phonemize([pre_process])[0]
+            phonemized = super(CustomEspeakBackend, self).phonemize([pre_process])[0]
             post_txt = self.post_process(phonemized)
             result.append(post_txt)
             
