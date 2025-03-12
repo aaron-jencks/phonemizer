@@ -69,7 +69,7 @@ class CustomEspeakBackend(EspeakBackend):
         for token in self.mappings:
             tphoneme = self.mappings[token]
             if tphoneme not in phoneme:
-                raise Exception(f"Replacement '{replacement[0]}' not found in '{phoneme}'")
+                raise Exception(f"Replacement '{tphoneme}' not found in '{phoneme}'")
             phoneme = phoneme.replace(
                 tphoneme, token)
 
