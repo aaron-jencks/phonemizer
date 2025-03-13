@@ -62,7 +62,7 @@ class CustomEspeakBackend(EspeakBackend):
             def mark_case(txt) -> str:
                 return '<>' + txt.group(0) + '<>'
 
-            token = re.sub(r'[A-Z]+', mark_case, token)
+            token = re.sub(r'[A-Z]', mark_case, token)
             
             if txt in self.mappings:
                 return token
