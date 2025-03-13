@@ -52,11 +52,12 @@ class CustomEspeakBackend(EspeakBackend):
     def pre_process(self, txt: str, phonemize):
         def replace_match(match):
             txt = match.group(0)
-            token = self.token.format(
-                index=self.token_index,
-                content=txt
-            )
-            self.token_index += 1
+            # token = self.token.format(
+            #     index=self.token_index,
+            #     content=txt
+            # )
+            # self.token_index += 1
+            token = f'<|.{txt}.|>'
             
             if txt in self.mappings:
                 return token
