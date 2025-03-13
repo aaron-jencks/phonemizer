@@ -57,7 +57,7 @@ class CustomEspeakBackend(EspeakBackend):
             #     content=txt
             # )
             # self.token_index += 1
-            token = f'<|.{self.token_index} {txt}.|>'
+            token = f'<|.<|{self.token_index}|> {txt}.|>'
             self.token_index += 1
 
             # def mark_case(txt) -> str:
