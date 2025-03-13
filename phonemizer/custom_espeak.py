@@ -18,7 +18,8 @@ class CustomEspeakBackend(EspeakBackend):
                  language_switch: LanguageSwitch = 'keep-flags',
                  words_mismatch: WordMismatch = 'ignore',
                  logger: Optional[Logger] = None):
-        self.token = "<|begin_custom_regex_preservation|> {content}"
+        self.token_index = 0
+        self.token = "<|begin_custom_regex_preservation_{index}|> {content}"
         self.regex = re.compile('|'.join([f'({pattern})' for pattern in preserve_regex]))
         self.mappings = {}
 
@@ -40,6 +41,7 @@ class CustomEspeakBackend(EspeakBackend):
         result = []
         for txt in text:
             self.mappings = {}
+            self.token_index = 0
             pre_process = self.pre_process(txt, super(CustomEspeakBackend, self).phonemize)
             phonemized = super(CustomEspeakBackend, self).phonemize([pre_process])[0]
             post_txt = self.post_process(phonemized)
@@ -51,8 +53,10 @@ class CustomEspeakBackend(EspeakBackend):
         def replace_match(match):
             txt = match.group(0)
             token = self.token.format(
+                index=self.token_index,
                 content=txt
             )
+            self.token_index += 1
             
             if txt in self.mappings:
                 return token
@@ -70,7 +74,7 @@ class CustomEspeakBackend(EspeakBackend):
         for token in self.mappings:
             tphoneme = self.mappings[token]
             if tphoneme not in phoneme:
-                raise Exception(f"Replacement '{tphoneme}' not found in '{phoneme}'")
+                raise Exception(f"replacement '{tphoneme}' not found in '{phoneme}'")
             phoneme = phoneme.replace(
                 tphoneme, token)
 
