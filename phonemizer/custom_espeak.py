@@ -25,7 +25,7 @@ class CustomEspeakBackend(EspeakBackend):
 
         super().__init__(
             language,
-            punctuation_marks=punct,
+            punctuation_marks=re.compile(punct),
             preserve_punctuation=preserve_punctuation,
             with_stress=with_stress,
             tie=tie,
