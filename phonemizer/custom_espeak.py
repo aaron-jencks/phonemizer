@@ -57,12 +57,13 @@ class CustomEspeakBackend(EspeakBackend):
             #     content=txt
             # )
             # self.token_index += 1
-            token = f'<|.{txt}.|>'
+            token = f'<|.{self.token_index} {txt}.|>'
+            self.token_index += 1
 
-            def mark_case(txt) -> str:
-                return '<>' + txt.group(0) + '<>'
+            # def mark_case(txt) -> str:
+            #     return '<>' + txt.group(0) + '<>'
 
-            token = re.sub(r'[A-Z]', mark_case, token)
+            # token = re.sub(r'[A-Z]', mark_case, token)
             
             if txt in self.mappings:
                 return token
