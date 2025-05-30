@@ -11,7 +11,7 @@ from phonemizer.backend.espeak.words_mismatch import WordMismatch
 class CustomEspeakBackend(EspeakBackend):
     def __init__(self, language: str,
                  punct: Optional[str] = None,
-                 preserve_regex: Optional[List[str]] = [],
+                 preserve_regex: Optional[List[str]] = None,
                  preserve_punctuation: bool = False,
                  with_stress: bool = False,
                  tie: Union[bool, str] = False,
@@ -19,8 +19,7 @@ class CustomEspeakBackend(EspeakBackend):
                  words_mismatch: WordMismatch = 'ignore',
                  logger: Optional[Logger] = None):
         self.token_index = 0
-        self.token = "<|begin_custom_regex_preservation_{index}|> {content}"
-        self.regex = re.compile('|'.join([f'({pattern})' for pattern in preserve_regex]))
+        self.regex = re.compile('|'.join([f'({pattern})' for pattern in preserve_regex])) if preserve_regex else None
         self.mappings = {}
 
         super().__init__(
