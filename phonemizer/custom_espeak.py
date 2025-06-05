@@ -97,6 +97,6 @@ class CustomEspeakBackend(EspeakBackend):
             if suffix not in phoneme:
                 raise Exception(f'phoneme {suffix} not in {phoneme}')
 
-            phoneme = re.sub(f'{prefix} .*? {suffix}', token, phoneme)
+            phoneme = re.sub(f'{prefix} .*? {suffix}', lambda x: token, phoneme)
 
         return phoneme
